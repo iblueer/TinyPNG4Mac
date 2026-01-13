@@ -165,7 +165,14 @@
       }
     },
     "Available Keys:" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "可用密钥："
+          }
+        }
+      }
     },
     "Cancel" : {
       "localizations" : {
@@ -188,7 +195,14 @@
       }
     },
     "Cannot use the app's internal directory. Please select a different location." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法使用本App的内置目录。请另选一个位置。"
+          }
+        }
+      }
     },
     "Clear" : {
       "localizations" : {
@@ -273,13 +287,34 @@
       }
     },
     "Compressed images are saved as new files." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "图片压缩后已被另存为新文件。"
+          }
+        }
+      }
     },
     "Compressed images replace originals. Originals can be restored before quitting." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "图片压缩后已覆盖源文件。退出本应用前，可恢复源文件。"
+          }
+        }
+      }
     },
     "Compressed: %@" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已压缩：%@"
+          }
+        }
+      }
     },
     "Concurrent Tasks" : {
       "localizations" : {
@@ -528,7 +563,14 @@
       }
     },
     "No available API keys. The system is applying for new keys, please wait..." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "没有可用的API密钥。系统正在申请新的密钥，请稍候…"
+          }
+        }
+      }
     },
     "No log messages" : {
       "localizations" : {

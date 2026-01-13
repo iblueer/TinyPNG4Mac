@@ -61,7 +61,7 @@ struct TaskRowView: View {
                                 Button {
                                     NSWorkspace.shared.open(task.originUrl.deletingLastPathComponent())
                                 } label: {
-                                    Text("Reveal Origin Image in Finder")
+                                    Text("Reveal in Finder")
                                 }
 
                                 Divider()
@@ -84,7 +84,7 @@ struct TaskRowView: View {
                                 Button {
                                     NSWorkspace.shared.open(task.outputUrl!.deletingLastPathComponent())
                                 } label: {
-                                    Text("Reveal Compressed Image in Finder")
+                                    Text("Reveal Compressed in Finder")
                                 }
 
                                 Divider()
@@ -200,7 +200,6 @@ struct TaskRowView: View {
                         .stroke(Color("taskRowStroke"), lineWidth: 1)
                 }
         )
-        .shadow(color: Color("taskRowShadow"), radius: 4, x: 0, y: 2)
         .padding(.leading, 4)
         .padding(.trailing, 4)
         .padding(.top, 4)
@@ -210,13 +209,15 @@ struct TaskRowView: View {
     func statusTextColor(_ status: TaskStatus) -> Color {
         switch status {
         case .failed:
-            Color("textRed")
+            Color.red
         case .cancelled:
-            Color("textCaption")
+            Color.secondary
         case .completed:
-            Color("textGreen")
+            Color.green
+        case .restored:
+            Color.orange
         default:
-            Color("textSecondary")
+            Color.secondary
         }
     }
 

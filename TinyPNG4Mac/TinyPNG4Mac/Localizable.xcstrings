@@ -4,6 +4,9 @@
     "" : {
       "shouldTranslate" : false
     },
+    "-%@" : {
+
+    },
     "\"Save As Mode\" is selected. Please config the output directory first." : {
       "localizations" : {
         "zh-Hans" : {
@@ -34,6 +37,7 @@
 
     },
     "%lld tasks, %@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -79,6 +83,9 @@
         }
       }
     },
+    "API Key Status" : {
+
+    },
     "API key:" : {
       "shouldTranslate" : false
     },
@@ -107,6 +114,9 @@
     "Available API keys in the pool. Keys are automatically applied when needed." : {
 
     },
+    "Available Keys:" : {
+
+    },
     "Cancel" : {
       "localizations" : {
         "zh-Hans" : {
@@ -126,6 +136,9 @@
           }
         }
       }
+    },
+    "Clear" : {
+
     },
     "Clear all finished tasks" : {
       "localizations" : {
@@ -148,6 +161,7 @@
       }
     },
     "Click to open: " : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -168,6 +182,7 @@
       }
     },
     "Completed:" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -186,6 +201,9 @@
           }
         }
       }
+    },
+    "Compressed: %@" : {
+
     },
     "Concurrent tasks:" : {
       "localizations" : {
@@ -228,6 +246,7 @@
       }
     },
     "Convert Images to:" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -256,6 +275,9 @@
           }
         }
       }
+    },
+    "Debug Log" : {
+
     },
     "Disable \"Overwrite Mode\" after selecting the output directory." : {
       "localizations" : {
@@ -328,6 +350,7 @@
       }
     },
     "Images compressed this month: %@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -336,6 +359,9 @@
           }
         }
       }
+    },
+    "Keep origin" : {
+
     },
     "Keep origin format" : {
       "localizations" : {
@@ -371,6 +397,12 @@
       }
     },
     "No available API keys. The system is applying for new keys, please wait..." : {
+
+    },
+    "No log messages" : {
+
+    },
+    "No recent activity" : {
 
     },
     "No write permission of output folder %@, please re-select the output directory." : {
@@ -414,6 +446,7 @@
       }
     },
     "Output directory is not set yet, please select it in the settings window." : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -422,6 +455,9 @@
           }
         }
       }
+    },
+    "Output directory is not set." : {
+
     },
     "Output directory:" : {
       "localizations" : {
@@ -517,6 +553,9 @@
     "Quota" : {
 
     },
+    "Recent Activity" : {
+
+    },
     "Restore" : {
       "localizations" : {
         "zh-Hans" : {
@@ -587,7 +626,14 @@
         }
       }
     },
+    "Reveal Compressed in Finder" : {
+
+    },
+    "Reveal in Finder" : {
+
+    },
     "Reveal Origin Image in Finder" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -638,6 +684,9 @@
         }
       }
     },
+    "Settings" : {
+
+    },
     "Supports WebP, PNG, and JPEG images." : {
       "localizations" : {
         "zh-Hans" : {
@@ -678,7 +727,11 @@
         }
       }
     },
+    "The output directory does not exist." : {
+
+    },
     "The output directory does not exist. It will be automatically created after any task is completed." : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -722,6 +775,7 @@
       }
     },
     "Total:" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -742,6 +796,7 @@
       }
     },
     "Use the smallest format automatically" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {

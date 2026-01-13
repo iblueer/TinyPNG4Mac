@@ -16,13 +16,7 @@ struct MainContentView: View {
     @State private var showOpenPanel = false
     @State private var showRestoreAllConfirmAlert = false
     @State private var alertMessage: String? = nil
-    @State private var showOutputDirectoryTips: Bool = false
-    @State private var outputDirectoryButtonPosition: CGRect = CGRect.zero
     @State private var rootSize: CGSize = CGSize.zero
-    @State private var hoverSaveModeButton: Bool = false
-    @State private var showAutoConvertTypeTips: Bool = false
-    @State private var autoConvertTypeTipsPosition: CGRect = CGRect.zero
-    @State private var hoverConvertTypeMenu: Bool = false
 
     @AppStorage(AppConfig.key_saveMode) var saveMode: String = AppContext.shared.appConfig.saveMode
 
@@ -43,10 +37,10 @@ struct MainContentView: View {
                         RoundedRectangle(cornerRadius: 12)
                             .stroke(style: StrokeStyle(
                                 lineWidth: 2,
-                                dash: [6, 3]
+                                dash: [8, 4]
                             ))
-                            .foregroundColor(Color.white.opacity(0.1))
-                            .padding()
+                            .foregroundColor(Color("textCaption"))
+                            .padding(16)
 
                         VStack(spacing: 12) {
                             Image(systemName: "photo.on.rectangle.angled")
@@ -82,197 +76,170 @@ struct MainContentView: View {
                     .environment(\.defaultMinListRowHeight, 0)
                 }
 
-                HorizontalDivider()
-                    .padding(vertical: 0, horizontal: 12)
-                    .padding(.top, 2)
-
-                // Format converting
-                HStack(spacing: 2) {
-                    Text("Convert Images to:")
-                        .font(.system(size: 12))
-                        .foregroundStyle(Color("textCaption"))
-
-                    Menu {
-                        Button {
-                            vm.targetConvertType = nil
-                        } label: {
-                            Text("Keep origin format")
-                                .font(.system(size: 12))
-                        }
-
-                        Divider()
-
-                        Button {
-                            vm.targetConvertType = .auto
-                        } label: {
-                            Text("Auto")
-                                .font(.system(size: 12))
-                        }
-
-                        Text("Use the smallest format automatically")
-                            .font(.system(size: 10))
-
-                        Divider()
-
-                        ForEach(ImageType.allTypes, id: \.self) { type in
-                            Button {
-                                vm.targetConvertType = type
-                            } label: {
-                                Text(type.toDisplayName())
-                                    .font(.system(size: 12))
+                // ═══════════════════════════════════════════════════════════
+                // MARK: - 底部状态栏 (重构为2行逻辑分组)
+                // ═══════════════════════════════════════════════════════════
+                
+                VStack(spacing: 0) {
+                    // ─── 第一行: 统计 + 设置 ───────────────────────────────
+                    HStack(spacing: 12) {
+                        // 左侧: 任务统计 (只读信息)
+                        HStack(spacing: 16) {
+                            // 任务计数
+                            Label {
+                                Text("\(vm.tasks.count)")
+                                    .font(.system(size: 11, weight: .medium))
+                                    .foregroundStyle(Color("textSecondary"))
+                            } icon: {
+                                Image(systemName: "photo.stack")
+                                    .font(.system(size: 10))
+                                    .foregroundStyle(Color("textCaption"))
                             }
-                        }
-                    } label: {
-                        Text(vm.convertTypeName)
-                            .font(.system(size: 12))
-                            .foregroundStyle(Color("textSecondary"))
-                            .frame(minWidth: 20)
-                    }
-                    .padding(vertical: 2, horizontal: 4)
-                    .background {
-                        if hoverConvertTypeMenu {
-                            RoundedRectangle(cornerRadius: 4)
-                                .fill(Color.white.opacity(0.15))
-                        } else {
-                            Color.clear
-                        }
-                    }
-                    .onHover { hover in
-                        hoverConvertTypeMenu = hover
-                    }
-                    .menuStyle(.borderlessButton)
-                    .menuIndicator(.hidden)
-                    .tint(Color("textSecondary"))
-                    .fixedSize(horizontal: true, vertical: false)
-
-                    if vm.targetConvertType == .auto {
-                        Image(systemName: "info.circle.fill")
-                            .font(.system(size: 12, weight: .medium))
-                            .foregroundStyle(Color("textSecondary"))
-                            .background {
-                                GeometryReader { proxy in
-                                    Color.clear
-                                        .onAppear {
-                                            autoConvertTypeTipsPosition = proxy.frame(in: .named("root"))
-                                        }
-                                        .onChange(of: proxy.frame(in: .named("root"))) { newFrame in
-                                            autoConvertTypeTipsPosition = newFrame
-                                        }
-                                }
-                            }
-                            .onHover { hover in
-                                showAutoConvertTypeTips = hover
-                            }
-                    }
-
-                    Spacer()
-                }
-                .padding(vertical: 8, horizontal: 12)
-
-                HorizontalDivider()
-                    .padding(vertical: 0, horizontal: 12)
-                    .padding(.top, 2)
-
-                HStack(alignment: .top) {
-                    VStack(alignment: .leading, spacing: 2) {
-                        KeyValueLabel(key: "Total:", value: "\(vm.tasks.count) tasks, \(vm.totalOriginSize.formatBytes())")
-
-                        KeyValueLabel(key: "Completed:", value: "\(vm.completedTaskCount) tasks, \(vm.totalFinalSize.formatBytes())")
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-
-                    HStack(spacing: 2) {
-                        Text("Save Mode:")
-                            .font(.system(size: 12))
-                            .foregroundStyle(Color("textCaption"))
-
-                        settingButton(useButtonStyle: false) {
-                            Text(LocalizedStringKey(saveMode))
-                                .font(.system(size: 12))
-                                .foregroundStyle(Color("textSecondary"))
-                                .padding(vertical: 2, horizontal: 4)
-                                .background {
-                                    if hoverSaveModeButton {
-                                        RoundedRectangle(cornerRadius: 4)
-                                            .fill(Color.white.opacity(0.15))
-                                    } else {
-                                        Color.clear
-                                    }
-                                }
-                                .onHover { hover in
-                                    hoverSaveModeButton = hover
-                                }
-                        }
-                    }
-                }
-                .padding(EdgeInsets(top: 8, leading: 12, bottom: 0, trailing: 12))
-
-                HStack(alignment: .bottom, spacing: 6) {
-                    // 自动密钥模式状态显示
-                    if AppContext.shared.appConfig.autoKeyMode {
-                        HStack(spacing: 8) {
-                            // 剩余配额胶囊
-                            QuotaCapsuleView(usedQuota: vm.monthlyUsedQuota)
                             
-                            // 密钥状态胶囊
-                            APIKeyStatusView()
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    } else {
-                        // 手动模式：显示传统的已压缩数量
-                        let usedQuota = vm.monthlyUsedQuota >= 0 ? String(vm.monthlyUsedQuota) : "--"
-                        Text("Images compressed this month: \(usedQuota)")
-                            .font(.system(size: 12))
-                            .foregroundStyle(Color("textSecondary"))
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    }
-
-                    if saveMode == AppConfig.saveModeNameSaveAs {
-                        Button {
-                            if let outputDir = appContext.appConfig.outputDirectoryUrl {
-                                if outputDir.fileExists() {
-                                    NSWorkspace.shared.open(outputDir)
-                                } else {
-                                    alertMessage = String(localized: "The output directory does not exist. It will be automatically created after any task is completed.")
+                            // 完成计数
+                            Label {
+                                Text("\(vm.completedTaskCount)")
+                                    .font(.system(size: 11, weight: .medium))
+                                    .foregroundStyle(Color("textSecondary"))
+                            } icon: {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .font(.system(size: 10))
+                                    .foregroundStyle(Color.green.opacity(0.8))
+                            }
+                            
+                            // 节省大小
+                            if vm.completedTaskCount > 0 {
+                                let saved = Int64(vm.totalOriginSize) - Int64(vm.totalFinalSize)
+                                if saved > 0 {
+                                    Label {
+                                        Text("-\(UInt64(saved).formatBytes())")
+                                            .font(.system(size: 11, weight: .medium))
+                                            .foregroundStyle(Color.green)
+                                    } icon: {
+                                        Image(systemName: "arrow.down.circle.fill")
+                                            .font(.system(size: 10))
+                                            .foregroundStyle(Color.green.opacity(0.8))
+                                    }
                                 }
-                            } else {
-                                vm.settingsNotReadyMessage = String(localized: "Output directory is not set yet, please select it in the settings window.")
                             }
-                        } label: {
-                            Image(systemName: "folder.circle.fill")
-                                .font(.system(size: 13, weight: .medium))
+                            
+                            // 任务操作菜单 (放在统计信息旁边)
+                            menuEntry()
+                        }
+                        
+                        Spacer()
+                        
+                        // 右侧: 操作设置 (格式 + 保存模式)
+                        HStack(spacing: 8) {
+                            // 格式选择
+                            Menu {
+                                Button { vm.targetConvertType = nil } label: { Text("Keep origin") }
+                                Divider()
+                                Button { vm.targetConvertType = .auto } label: { Text("Auto") }
+                                Divider()
+                                ForEach(ImageType.allTypes, id: \.self) { type in
+                                    Button { vm.targetConvertType = type } label: { Text(type.toDisplayName()) }
+                                }
+                            } label: {
+                                HStack(spacing: 4) {
+                                    Image(systemName: "doc.badge.arrow.up")
+                                        .font(.system(size: 10))
+                                    Text(vm.convertTypeName)
+                                        .font(.system(size: 11))
+                                }
                                 .foregroundStyle(Color("textSecondary"))
-                                .frame(width: 20, height: 20)
-                        }
-                        .buttonStyle(PlainButtonStyle())
-                        .background {
-                            GeometryReader { proxy in
-                                Color.clear
-                                    .onAppear {
-                                        outputDirectoryButtonPosition = proxy.frame(in: .named("root"))
-                                    }
-                                    .onChange(of: proxy.frame(in: .named("root"))) { newFrame in
-                                        outputDirectoryButtonPosition = newFrame
-                                    }
+                                .padding(.vertical, 4)
+                                .padding(.horizontal, 8)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 6)
+                                        .fill(Color.white.opacity(0.05))
+                                )
                             }
-                        }
-                        .onHover { hover in
-                            showOutputDirectoryTips = hover
+                            .menuStyle(.borderlessButton)
+                            .menuIndicator(.hidden)
+                            
+                            // 保存模式
+                            settingButton(useButtonStyle: false) {
+                                HStack(spacing: 4) {
+                                    Image(systemName: saveMode == AppConfig.saveModeNameOverwrite ? "doc.fill" : "folder.fill")
+                                        .font(.system(size: 10))
+                                    Text(LocalizedStringKey(saveMode))
+                                        .font(.system(size: 11))
+                                }
+                                .foregroundStyle(Color("textSecondary"))
+                                .padding(.vertical, 4)
+                                .padding(.horizontal, 8)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 6)
+                                        .fill(Color.white.opacity(0.05))
+                                )
+                            }
+                            
+                            // 输出文件夹按钮 - 使用 macOS 标准 .help()
+                            if saveMode == AppConfig.saveModeNameSaveAs {
+                                Button {
+                                    if let outputDir = appContext.appConfig.outputDirectoryUrl {
+                                        if outputDir.fileExists() {
+                                            NSWorkspace.shared.open(outputDir)
+                                        } else {
+                                            alertMessage = String(localized: "The output directory does not exist.")
+                                        }
+                                    } else {
+                                        vm.settingsNotReadyMessage = String(localized: "Output directory is not set.")
+                                    }
+                                } label: {
+                                    Image(systemName: "folder")
+                                        .font(.system(size: 11))
+                                        .foregroundStyle(Color("textSecondary"))
+                                        .frame(width: 24, height: 24)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 6)
+                                                .fill(Color.white.opacity(0.05))
+                                        )
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                                .help(appContext.appConfig.outputDirectoryUrl?.rawPath() ?? "Output folder")
+                            }
                         }
                     }
-
-                    menuEntry()
-                }.padding(EdgeInsets(top: 6, leading: 12, bottom: 12, trailing: 12))
-            }
-
-            DebugView()
-
-            if let outputDir = appContext.appConfig.outputDirectoryUrl, showOutputDirectoryTips {
-                TipsView(message: String(localized: "Click to open: ") + "\n\(outputDir.rawPath())", alignCenterOrRight: false, rootSize: $rootSize, anchorViewFrame: $outputDirectoryButtonPosition)
-            }
-
-            if showAutoConvertTypeTips {
-                TipsView(message: String(localized: "Use the smallest format automatically"), alignCenterOrRight: true, rootSize: $rootSize, anchorViewFrame: $autoConvertTypeTipsPosition)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    
+                    // 分隔线 - 使用 macOS 标准 Divider
+                    Divider()
+                        .padding(.horizontal, 12)
+                    
+                    // ─── 第二行: API 状态 + 设置按钮 ─────────────────────────────
+                    HStack(spacing: 8) {
+                        // 自动密钥模式状态
+                        if AppContext.shared.appConfig.autoKeyMode {
+                            QuotaCapsuleView(usedQuota: vm.monthlyUsedQuota)
+                            APIKeyStatusView()
+                        } else {
+                            let usedQuota = vm.monthlyUsedQuota >= 0 ? String(vm.monthlyUsedQuota) : "--"
+                            Text("Compressed: \(usedQuota)")
+                                .font(.system(size: 11))
+                                .foregroundStyle(Color("textCaption"))
+                        }
+                        
+                        Spacer()
+                        
+                        // 设置按钮
+                        settingButton(useButtonStyle: false) {
+                            Image(systemName: "gearshape")
+                                .font(.system(size: 12))
+                                .foregroundStyle(Color("textSecondary"))
+                                .frame(width: 24, height: 24)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 6)
+                                        .fill(Color.white.opacity(0.05))
+                                )
+                        }
+                        .help("Settings")
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                }
             }
         }
         .coordinateSpace(name: "root")
@@ -438,42 +405,6 @@ struct MainContentView: View {
             return outputDir.fileExists()
         }
         return false
-    }
-}
-
-struct TipsView: View {
-    let message: String
-    let alignCenterOrRight: Bool
-
-    @Binding var rootSize: CGSize
-    @Binding var anchorViewFrame: CGRect
-
-    @State private var tipsSize: CGSize = CGSize.zero
-
-    var body: some View {
-        Text(message)
-            .font(.system(size: 12))
-            .foregroundStyle(Color("textBody"))
-            .lineLimit(2)
-            .padding(vertical: 6, horizontal: 12)
-            .background {
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(Color.black.opacity(0.8))
-            }
-            .padding(.leading, 12)
-            .padding(.trailing, 12)
-            .background {
-                GeometryReader { proxy in
-                    Color.clear
-                        .onAppear {
-                            tipsSize = proxy.size
-                        }
-                        .onChange(of: proxy.size) { newSize in
-                            tipsSize = newSize
-                        }
-                }
-            }
-            .position(x: alignCenterOrRight ? anchorViewFrame.origin.x + anchorViewFrame.width / 2 : rootSize.width / 2 + (rootSize.width - tipsSize.width) / 2, y: anchorViewFrame.origin.y - tipsSize.height / 2 - 4)
     }
 }
 

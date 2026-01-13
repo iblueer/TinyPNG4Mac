@@ -128,6 +128,17 @@ class AppConfig {
     }
 
     func currentUsedQuota() -> Int? {
+        // 自动模式：使用当前 APIKeyManager 的 key
+        if autoKeyMode {
+            if let currentKey = APIKeyManager.shared.currentKey, currentKey.count >= 8 {
+                let key = String(currentKey.prefix(8))
+                return self.usedQuotaCache[key]
+            }
+            // 自动模式下如果没有 key，返回缓存的最后一个值
+            return self.usedQuotaCache["_auto_last_"]
+        }
+        
+        // 手动模式
         if apiKey.isEmpty || apiKey.count < 8 {
             return nil
         }
@@ -136,6 +147,19 @@ class AppConfig {
     }
 
     func saveUsedQuota(_ quota: Int) {
+        // 自动模式：使用当前 APIKeyManager 的 key
+        if autoKeyMode {
+            if let currentKey = APIKeyManager.shared.currentKey, currentKey.count >= 8 {
+                let key = String(currentKey.prefix(8))
+                self.usedQuotaCache[key] = quota
+            }
+            // 同时保存到 _auto_last_ 以便启动时使用
+            self.usedQuotaCache["_auto_last_"] = quota
+            UserDefaults.standard.set(self.usedQuotaCache, forKey: AppConfig.key_usedQuotaCache)
+            return
+        }
+        
+        // 手动模式
         if apiKey.isEmpty || apiKey.count < 8 {
             return
         }

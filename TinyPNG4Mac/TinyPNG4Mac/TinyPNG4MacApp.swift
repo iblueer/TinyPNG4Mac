@@ -103,6 +103,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             window.titleVisibility = .hidden
             window.titlebarAppearsTransparent = true
         }
+        
+        // Debug 模式自动显示调试日志窗口
+        if AppContext.shared.isDebug {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                DebugLogWindowController.shared.showNextToMainWindow()
+            }
+        }
 
         appDidFinishLaunching = true
 

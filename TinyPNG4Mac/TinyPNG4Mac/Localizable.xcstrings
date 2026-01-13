@@ -1,9 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "" : {
-      "shouldTranslate" : false
-    },
     "-%@" : {
 
     },
@@ -27,14 +24,8 @@
         }
       }
     },
-    "[D]Clear output directory" : {
-      "shouldTranslate" : false
-    },
     "%lld" : {
       "shouldTranslate" : false
-    },
-    "%lld keys available" : {
-
     },
     "%lld tasks, %@" : {
       "extractionState" : "stale",
@@ -83,17 +74,55 @@
         }
       }
     },
+    "API Key" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "API 密钥"
+          }
+        }
+      }
+    },
     "API Key Status" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "API 密钥状态"
+          }
+        }
+      }
     },
-    "API key:" : {
-      "shouldTranslate" : false
+    "API keys are automatically applied and managed." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "API 密钥将自动申请和管理。"
+          }
+        }
+      }
     },
-    "Apply New Key" : {
-
+    "Apply New" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "申请新密钥"
+          }
+        }
+      }
     },
     "Applying new key..." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在申请新密钥..."
+          }
+        }
+      }
     },
     "Auto" : {
       "localizations" : {
@@ -105,14 +134,35 @@
         }
       }
     },
-    "Auto Key Mode:" : {
-
+    "Auto Key Mode" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自动密钥模式"
+          }
+        }
+      }
     },
     "Auto Keys" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自动密钥"
+          }
+        }
+      }
     },
-    "Available API keys in the pool. Keys are automatically applied when needed." : {
-
+    "Available Keys" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "可用密钥"
+          }
+        }
+      }
     },
     "Available Keys:" : {
 
@@ -137,8 +187,18 @@
         }
       }
     },
-    "Clear" : {
+    "Cannot use the app's internal directory. Please select a different location." : {
 
+    },
+    "Clear" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "清除"
+          }
+        }
+      }
     },
     "Clear all finished tasks" : {
       "localizations" : {
@@ -156,6 +216,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "清除全部任务"
+          }
+        }
+      }
+    },
+    "Clear Output Directory" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "清除输出目录"
           }
         }
       }
@@ -202,10 +272,27 @@
         }
       }
     },
+    "Compressed images are saved as new files." : {
+
+    },
+    "Compressed images replace originals. Originals can be restored before quitting." : {
+
+    },
     "Compressed: %@" : {
 
     },
+    "Concurrent Tasks" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "并行任务数量"
+          }
+        }
+      }
+    },
     "Concurrent tasks:" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -267,6 +354,7 @@
       }
     },
     "Creation" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -276,10 +364,38 @@
         }
       }
     },
+    "Creation Date" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "创建日期"
+          }
+        }
+      }
+    },
+    "Debug" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "调试"
+          }
+        }
+      }
+    },
     "Debug Log" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "调试日志"
+          }
+        }
+      }
     },
     "Disable \"Overwrite Mode\" after selecting the output directory." : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -330,6 +446,7 @@
       }
     },
     "Failed to save output directory" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -360,8 +477,25 @@
         }
       }
     },
+    "Invalid Directory" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无效目录"
+          }
+        }
+      }
+    },
     "Keep origin" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保留原格式"
+          }
+        }
+      }
     },
     "Keep origin format" : {
       "localizations" : {
@@ -372,9 +506,6 @@
           }
         }
       }
-    },
-    "Key Status:" : {
-
     },
     "Location" : {
       "localizations" : {
@@ -400,10 +531,24 @@
 
     },
     "No log messages" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "暂无日志"
+          }
+        }
+      }
     },
     "No recent activity" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "暂无活动"
+          }
+        }
+      }
     },
     "No write permission of output folder %@, please re-select the output directory." : {
       "localizations" : {
@@ -445,6 +590,16 @@
         }
       }
     },
+    "Output" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "输出"
+          }
+        }
+      }
+    },
     "Output directory is not set yet, please select it in the settings window." : {
       "extractionState" : "stale",
       "localizations" : {
@@ -460,6 +615,7 @@
 
     },
     "Output directory:" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -481,6 +637,7 @@
       }
     },
     "Overwrite Mode:\nThe compressed image will replace the original file. The original image is kept temporarily and can be restored before exit the app.\n\nSave As Mode:\nThe compressed image is saved as a new file, leaving the original image unchanged. You can choose where to save the compressed images." : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -501,6 +658,7 @@
       }
     },
     "Please select a different directory." : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -520,7 +678,18 @@
         }
       }
     },
+    "Preserve Metadata" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保留元数据"
+          }
+        }
+      }
+    },
     "Preserve:" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -551,10 +720,24 @@
       }
     },
     "Quota" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "配额"
+          }
+        }
+      }
     },
     "Recent Activity" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最近活动"
+          }
+        }
+      }
     },
     "Restore" : {
       "localizations" : {
@@ -621,16 +804,30 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "打开压缩图片目录"
+            "value" : "打开已压缩图片"
           }
         }
       }
     },
     "Reveal Compressed in Finder" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开已压缩图片目录"
+          }
+        }
+      }
     },
     "Reveal in Finder" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开原始图片目录"
+          }
+        }
+      }
     },
     "Reveal Origin Image in Finder" : {
       "extractionState" : "stale",
@@ -638,7 +835,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "打开已压缩图片目录"
+            "value" : "打开原始图片"
           }
         }
       }
@@ -654,7 +851,18 @@
         }
       }
     },
+    "Save Mode" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存模式"
+          }
+        }
+      }
+    },
     "Save Mode:" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -665,6 +873,7 @@
       }
     },
     "Select output directory" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -685,7 +894,14 @@
       }
     },
     "Settings" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设置"
+          }
+        }
+      }
     },
     "Supports WebP, PNG, and JPEG images." : {
       "localizations" : {
@@ -761,8 +977,8 @@
         }
       }
     },
-    "TinyPNG" : {
-      "shouldTranslate" : false
+    "TinyPNG API" : {
+
     },
     "TinyPNG holds the final right of interpretation regarding the image compression functionality and results." : {
       "localizations" : {
@@ -807,6 +1023,7 @@
       }
     },
     "Visit [https://tinypng.com/developers](https://tinypng.com/developers) to request an API key." : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -816,7 +1033,11 @@
         }
       }
     },
+    "Visit [tinypng.com/developers](https://tinypng.com/developers) to get an API key." : {
+
+    },
     "When \"Save As Mode\" is enabled, the compressed image will be saved to this directory. If a file with the same name exists, it will be overwritten." : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -825,9 +1046,6 @@
           }
         }
       }
-    },
-    "When enabled, API keys will be automatically applied and managed. No manual registration required." : {
-
     }
   },
   "version" : "1.0"

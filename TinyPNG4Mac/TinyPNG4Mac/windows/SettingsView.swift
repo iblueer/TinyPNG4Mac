@@ -9,6 +9,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @AppStorage(AppConfig.key_apiKey) var apiKey: String = ""
+    @AppStorage(AppConfig.key_autoKeyMode) var autoKeyMode: Bool = true
 
     @AppStorage(AppConfig.key_preserveCopyright) var preserveCopyright: Bool = false
     @AppStorage(AppConfig.key_preserveCreation) var preserveCreation: Bool = false
@@ -30,6 +31,10 @@ struct SettingsView: View {
     @State private var showSelectOutputFolder: Bool = false
 
     @State private var contentSize: CGSize = CGSize.zero
+    
+    // 自动密钥模式状态
+    @State private var availableKeyCount: Int = 0
+    @State private var isApplyingKey: Bool = false
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -40,13 +45,51 @@ struct SettingsView: View {
                     Text("TinyPNG")
                         .font(.system(size: 13, weight: .bold))
 
-                    SettingsItem(title: "API key:", desc: "Visit [https://tinypng.com/developers](https://tinypng.com/developers) to request an API key.") {
-                        TextField("", text: $apiKey)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .focused($isTextFieldFocused)
-                            .onAppear {
-                                isTextFieldFocused = false
+                    SettingsItem(title: "Auto Key Mode:", desc: "When enabled, API keys will be automatically applied and managed. No manual registration required.") {
+                        Toggle("", isOn: $autoKeyMode)
+                            .toggleStyle(.switch)
+                            .onChange(of: autoKeyMode) { newValue in
+                                if newValue {
+                                    // 开启自动模式时，初始化密钥管理器
+                                    TPClient.shared.initializeAutoKeyMode()
+                                    updateKeyStatus()
+                                }
                             }
+                    }
+                    
+                    if autoKeyMode {
+                        // 自动模式：显示密钥池状态
+                        SettingsItem(title: "Key Status:", desc: "Available API keys in the pool. Keys are automatically applied when needed.") {
+                            HStack {
+                                Text("\(availableKeyCount) keys available")
+                                    .foregroundColor(availableKeyCount > 0 ? .green : .red)
+                                
+                                Spacer()
+                                
+                                Button {
+                                    applyNewKey()
+                                } label: {
+                                    if isApplyingKey {
+                                        ProgressView()
+                                            .scaleEffect(0.7)
+                                            .frame(width: 16, height: 16)
+                                    } else {
+                                        Text("Apply New Key")
+                                    }
+                                }
+                                .disabled(isApplyingKey)
+                            }
+                        }
+                    } else {
+                        // 手动模式：显示 API Key 输入框
+                        SettingsItem(title: "API key:", desc: "Visit [https://tinypng.com/developers](https://tinypng.com/developers) to request an API key.") {
+                            TextField("", text: $apiKey)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .focused($isTextFieldFocused)
+                                .onAppear {
+                                    isTextFieldFocused = false
+                                }
+                        }
                     }
 
                     SettingsItem(title: "Preserve:", desc: nil) {
@@ -131,6 +174,11 @@ struct SettingsView: View {
         .padding(16)
         // Set the size of window.
         .frame(width: contentSize.width + 32, height: contentSize.height + 32)
+        .onAppear {
+            if autoKeyMode {
+                updateKeyStatus()
+            }
+        }
         .onChange(of: saveMode) { newValue in
             if newValue == AppConfig.saveModeNameSaveAs && outputDirectory.isEmpty {
                 saveMode = AppConfig.saveModeNameOverwrite
@@ -178,7 +226,31 @@ struct SettingsView: View {
                 print("User Select: \(url.rawPath())")
                 outputDirectory = url.rawPath()
             } else {
-                print("User did not grant access.")
+                print(\"User did not grant access.\")
+            }
+        }
+    }
+    
+    // MARK: - Auto Key Mode Methods
+    
+    private func updateKeyStatus() {
+        availableKeyCount = APIKeyManager.shared.availableKeyCount
+    }
+    
+    private func applyNewKey() {
+        isApplyingKey = true
+        Task {
+            do {
+                try await APIKeyManager.shared.applyAndStoreKeys(times: 1)
+                await MainActor.run {
+                    updateKeyStatus()
+                    isApplyingKey = false
+                }
+            } catch {
+                print("[SettingsView] Failed to apply key: \(error.localizedDescription)")
+                await MainActor.run {
+                    isApplyingKey = false
+                }
             }
         }
     }

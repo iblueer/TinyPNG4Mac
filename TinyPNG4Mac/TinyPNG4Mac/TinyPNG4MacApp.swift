@@ -95,6 +95,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         FileUtils.initPaths()
+        
+        // 初始化自动密钥模式
+        TPClient.shared.initializeAutoKeyMode()
 
         if let window = NSApp.windows.first {
             window.titleVisibility = .hidden

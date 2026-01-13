@@ -13,7 +13,16 @@ class TPClient {
     static let HEADER_COMPRESSION_COUNT = "Compression-Count"
 
     var apiKey: String {
-        ProcessInfo.processInfo.environment["API_KEY"] ?? AppContext.shared.appConfig.apiKey
+        // 优先使用环境变量（用于调试）
+        if let envKey = ProcessInfo.processInfo.environment["API_KEY"] {
+            return envKey
+        }
+        // 自动密钥模式：使用 APIKeyManager
+        if AppContext.shared.appConfig.autoKeyMode {
+            return APIKeyManager.shared.currentKey ?? ""
+        }
+        // 手动模式：使用用户配置的密钥
+        return AppContext.shared.appConfig.apiKey
     }
 
     var maxConcurrencyCount: Int {
@@ -29,6 +38,19 @@ class TPClient {
     private let lock: NSLock = NSLock()
 
     private var currentRequests: [Request] = []
+    
+    /// 初始化时确保有可用密钥
+    func initializeAutoKeyMode() {
+        guard AppContext.shared.appConfig.autoKeyMode else { return }
+        Task {
+            do {
+                try await APIKeyManager.shared.initialize()
+                print("[TPClient] APIKeyManager initialized with \(APIKeyManager.shared.availableKeyCount) keys")
+            } catch {
+                print("[TPClient] Failed to initialize APIKeyManager: \(error.localizedDescription)")
+            }
+        }
+    }
 
     func addTask(task: TaskInfo) {
         lock.withLock {
@@ -130,7 +152,13 @@ class TPClient {
                         self.failTask(task, error: TaskError.apiError(statusCode: response.response?.statusCode ?? 0, message: "fail to parse response"))
                     }
                 case let .failure(error):
-                    self.failTask(task, error: TaskError.apiError(statusCode: response.response?.statusCode ?? 0, message: error.localizedDescription))
+                    let statusCode = response.response?.statusCode ?? 0
+                    // 检测 401 或 429 错误，尝试切换密钥
+                    if statusCode == 401 || statusCode == 429 {
+                        self.handleAuthError(task: task, statusCode: statusCode, message: error.localizedDescription)
+                    } else {
+                        self.failTask(task, error: TaskError.apiError(statusCode: statusCode, message: error.localizedDescription))
+                    }
                 }
             }
         }
@@ -292,6 +320,38 @@ class TPClient {
         }
         checkExecution()
     }
+    
+    /// 处理认证错误，尝试切换密钥并重试
+    private func handleAuthError(task: TaskInfo, statusCode: Int, message: String) {
+        // 只在自动密钥模式下处理
+        guard AppContext.shared.appConfig.autoKeyMode else {
+            failTask(task, error: TaskError.apiError(statusCode: statusCode, message: message))
+            return
+        }
+        
+        print("[TPClient] Auth error (\(statusCode)), switching to next key...")
+        
+        Task {
+            do {
+                // 切换到下一个密钥
+                let newKey = try await APIKeyManager.shared.switchToNextKey()
+                print("[TPClient] Switched to new key: \(newKey?.prefix(8) ?? "none")...")
+                
+                // 重新将任务加入队列
+                await MainActor.run {
+                    self.lock.withLock {
+                        self.runningTasks -= 1
+                    }
+                    self.addTask(task: task)
+                }
+            } catch {
+                print("[TPClient] Failed to switch key: \(error.localizedDescription)")
+                await MainActor.run {
+                    self.failTask(task, error: TaskError.apiError(statusCode: statusCode, message: "\(message) - No more available API keys"))
+                }
+            }
+        }
+    }
 
     private func failTask(_ task: TaskInfo, error: Error? = nil) {
         updateError(TaskError.from(error: error), of: task)
@@ -325,6 +385,11 @@ class TPClient {
     private func updateUsedQuota(_ quota: Int) {
         DispatchQueue.main.async {
             self.callback?.onMonthlyUsedQuotaUpdated(quota: quota)
+            
+            // 在自动模式下，检查配额并触发后台密钥申请
+            if AppContext.shared.appConfig.autoKeyMode {
+                APIKeyManager.shared.checkQuotaAndPrepare(currentCount: quota)
+            }
         }
     }
 

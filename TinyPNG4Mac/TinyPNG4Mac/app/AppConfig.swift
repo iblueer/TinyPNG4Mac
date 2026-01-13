@@ -17,6 +17,7 @@ class AppConfig {
     static let key_outputDirectory = "outputDirectory"
     static let key_usedQuotaCache = "usedQuotaCache"
     static let key_convertingConfig = "convertingConfig"
+    static let key_autoKeyMode = "autoKeyMode"
     
     private static let key_migrated = "migrated"
 
@@ -50,7 +51,8 @@ class AppConfig {
     /// list of target format, empty for don't convert.
     /// Just use the first element so far. Use Array for extension consider.
     private(set) var convertingConfig: [String] = []
-
+    /// 是否启用自动密钥模式
+    private(set) var autoKeyMode: Bool = true
     private var hasMigrated = false
 
     init() {
@@ -71,8 +73,16 @@ class AppConfig {
         let ud = UserDefaults.standard
 
         let apiKey = ud.string(forKey: AppConfig.key_apiKey) ?? ""
-
         self.apiKey = apiKey
+        
+        // 自动密钥模式配置
+        // 默认开启自动模式，除非用户明确设置过
+        if ud.object(forKey: AppConfig.key_autoKeyMode) == nil {
+            self.autoKeyMode = true
+            ud.set(true, forKey: AppConfig.key_autoKeyMode)
+        } else {
+            self.autoKeyMode = ud.bool(forKey: AppConfig.key_autoKeyMode)
+        }
 
         let concurrentTaskCountValue = ud.integer(forKey: AppConfig.key_concurrentTaskCount)
         concurrentTaskCount = concurrentTaskCountValue > 0 ? concurrentTaskCountValue : 3

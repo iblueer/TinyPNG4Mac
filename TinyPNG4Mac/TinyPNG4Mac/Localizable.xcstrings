@@ -30,6 +30,9 @@
     "%lld" : {
       "shouldTranslate" : false
     },
+    "%lld keys available" : {
+
+    },
     "%lld tasks, %@" : {
       "localizations" : {
         "en" : {
@@ -79,6 +82,12 @@
     "API key:" : {
       "shouldTranslate" : false
     },
+    "Apply New Key" : {
+
+    },
+    "Applying new key..." : {
+
+    },
     "Auto" : {
       "localizations" : {
         "zh-Hans" : {
@@ -88,6 +97,15 @@
           }
         }
       }
+    },
+    "Auto Key Mode:" : {
+
+    },
+    "Auto Keys" : {
+
+    },
+    "Available API keys in the pool. Keys are automatically applied when needed." : {
+
     },
     "Cancel" : {
       "localizations" : {
@@ -329,6 +347,9 @@
         }
       }
     },
+    "Key Status:" : {
+
+    },
     "Location" : {
       "localizations" : {
         "zh-Hans" : {
@@ -348,6 +369,9 @@
           }
         }
       }
+    },
+    "No available API keys. The system is applying for new keys, please wait..." : {
+
     },
     "No write permission of output folder %@, please re-select the output directory." : {
       "localizations" : {
@@ -489,6 +513,9 @@
           }
         }
       }
+    },
+    "Quota" : {
+
     },
     "Restore" : {
       "localizations" : {
@@ -743,6 +770,9 @@
           }
         }
       }
+    },
+    "When enabled, API keys will be automatically applied and managed. No manual registration required." : {
+
     }
   },
   "version" : "1.0"

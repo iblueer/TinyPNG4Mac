@@ -238,9 +238,22 @@ class MainViewModel: ObservableObject, TPClientCallback {
     /// - Returns true if the settings is valid
     private func validateSettingsBeforeStartTask() -> Bool {
         let config = AppContext.shared.appConfig
-        if config.apiKey.isEmpty {
+        
+        // 检查 API Key：自动模式检查 APIKeyManager，手动模式检查配置
+        let hasValidKey: Bool
+        if config.autoKeyMode {
+            hasValidKey = APIKeyManager.shared.hasAvailableKey
+        } else {
+            hasValidKey = !config.apiKey.isEmpty
+        }
+        
+        if !hasValidKey {
             DispatchQueue.main.async {
-                self.settingsNotReadyMessage = String(localized: "Please set the API key first.")
+                if config.autoKeyMode {
+                    self.settingsNotReadyMessage = String(localized: "No available API keys. The system is applying for new keys, please wait...")
+                } else {
+                    self.settingsNotReadyMessage = String(localized: "Please set the API key first.")
+                }
             }
             return false
         }

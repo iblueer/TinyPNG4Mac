@@ -46,7 +46,7 @@ struct APIKeyStore: Codable {
 class APIKeyManager {
     static let shared = APIKeyManager()
     
-    private let snapMail = SnapMailService.shared
+    private let mailDrop = MailDropService.shared
     private var keyStore = APIKeyStore()
     private let keysFilePath: URL
     
@@ -100,12 +100,15 @@ class APIKeyManager {
         return !keyStore.available.isEmpty
     }
     
-    /// 初始化密钥管理器，确保有足够的可用密钥
+    /// 初始化密钥管理器，确保有至少 1 个可用密钥
     func initialize() async throws {
         loadKeys()
-        if keyStore.available.count < minAvailableKeys {
-            print("[APIKeyManager] Available keys (\(keyStore.available.count)) < \(minAvailableKeys), applying new keys...")
-            try await applyAndStoreKeys()
+        // 初始化时只确保有 1 个可用密钥即可
+        if keyStore.available.isEmpty {
+            print("[APIKeyManager] No available keys, applying one...")
+            try await applyAndStoreKeys(times: 1)
+        } else {
+            print("[APIKeyManager] Initialized with \(keyStore.available.count) available keys")
         }
     }
     
@@ -141,8 +144,19 @@ class APIKeyManager {
     func applyAndStoreKeys(times: Int? = nil) async throws {
         let targetTimes = times ?? (minAvailableKeys - keyStore.available.count + 1)
         var remainingTimes = max(0, targetTimes)
+        var rateLimitRetries = 0
+        let maxRateLimitRetries = 3 // 最多重试3次限流
+        
+        APIKeyStatusManager.shared.setApplying(true)
         
         while remainingTimes > 0 {
+            // 每次申请前等待，避免触发风控（第一次除外）
+            if remainingTimes < targetTimes {
+                let delaySeconds = 10
+                print("[APIKeyManager] Waiting \(delaySeconds) seconds before next attempt...")
+                try await Task.sleep(nanoseconds: UInt64(delaySeconds) * 1_000_000_000)
+            }
+            
             remainingTimes -= 1
             print("[APIKeyManager] Applying new key, remaining attempts: \(remainingTimes)")
             
@@ -151,15 +165,32 @@ class APIKeyManager {
                 keyStore.available.append(key)
                 saveKeys()
                 print("[APIKeyManager] Successfully applied new key")
+                APIKeyStatusManager.shared.addLog("✅ Key applied successfully")
+                rateLimitRetries = 0 // 成功后重置限流计数
             } catch {
                 print("[APIKeyManager] Failed to apply key: \(error.localizedDescription)")
-                // 如果是限流错误，等待后重试
+                
+                // 如果是限流错误，等待后重试（有次数限制）
                 if case APIKeyError.rateLimited = error {
-                    try await Task.sleep(nanoseconds: 30_000_000_000) // 30 seconds
+                    rateLimitRetries += 1
+                    if rateLimitRetries > maxRateLimitRetries {
+                        print("[APIKeyManager] Too many rate limit errors, giving up. Please try again later.")
+                        APIKeyStatusManager.shared.addLog("⚠️ Rate limited, try later")
+                        break
+                    }
+                    let waitSeconds = 60 * rateLimitRetries // 逐渐增加等待时间: 1分钟, 2分钟, 3分钟
+                    print("[APIKeyManager] Rate limited (\(rateLimitRetries)/\(maxRateLimitRetries)), waiting \(waitSeconds) seconds...")
+                    try await Task.sleep(nanoseconds: UInt64(waitSeconds) * 1_000_000_000)
                     remainingTimes += 1 // 不计入失败次数
+                } else {
+                    // 其他错误也等待一下再重试，避免快速循环
+                    print("[APIKeyManager] Waiting 5 seconds before retry...")
+                    try await Task.sleep(nanoseconds: 5_000_000_000) // 5 seconds
                 }
             }
         }
+        
+        APIKeyStatusManager.shared.setApplying(false)
     }
     
     /// 检查密钥使用量，必要时触发后台密钥申请
@@ -176,11 +207,11 @@ class APIKeyManager {
     
     /// 申请一个新的 API 密钥
     private func applyNewAPIKey() async throws -> String {
-        // Step 1: 创建临时邮箱
-        let mail = snapMail.createNewMail()
+        // Step 1: 创建临时邮箱账号 (mail.tm)
+        let mail = try await mailDrop.createAccount()
         let username = String(mail.prefix(while: { $0 != "@" }))
         
-        // Step 2: 注册账号
+        // Step 2: 向 TinyPNG 注册账号
         print("[APIKeyManager] Registering with email: \(mail)")
         try await registerAccount(email: mail, name: username)
         
@@ -227,22 +258,20 @@ class APIKeyManager {
     
     /// 从邮件中提取登录链接
     private func getLoginUrlFromEmail() async throws -> String {
-        let emails = try await snapMail.getEmailList(count: 1)
-        
-        guard let firstEmail = emails.first,
-              let text = firstEmail["text"] as? String else {
-            throw APIKeyError.emailReceiveFailed
-        }
+        // 使用 MailDropService 获取邮件内容
+        let emailText = try await mailDrop.getFirstEmailText(maxRetries: 8)
         
         // 使用正则表达式提取链接
-        let pattern = #"(https://tinify\.com/login\?token=[^\s"']+api)"#
+        // TinyPNG 邮件中的链接格式: https://tinypng.com/login?token=xxx...
+        let pattern = #"(https://tinypng\.com/login\?token=[^\s\]"'<>]+)"#
         guard let regex = try? NSRegularExpression(pattern: pattern),
-              let match = regex.firstMatch(in: text, range: NSRange(text.startIndex..., in: text)),
-              let range = Range(match.range(at: 1), in: text) else {
+              let match = regex.firstMatch(in: emailText, range: NSRange(emailText.startIndex..., in: emailText)),
+              let range = Range(match.range(at: 1), in: emailText) else {
+            print("[APIKeyManager] Email content: \(emailText.prefix(800))...")
             throw APIKeyError.linkExtractionFailed
         }
         
-        return String(text[range])
+        return String(emailText[range])
     }
     
     /// 登录并生成 API 密钥

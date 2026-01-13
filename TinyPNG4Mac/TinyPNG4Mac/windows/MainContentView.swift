@@ -208,11 +208,24 @@ struct MainContentView: View {
                 .padding(EdgeInsets(top: 8, leading: 12, bottom: 0, trailing: 12))
 
                 HStack(alignment: .bottom, spacing: 6) {
-                    let usedQuota = vm.monthlyUsedQuota >= 0 ? String(vm.monthlyUsedQuota) : "--"
-                    Text("Images compressed this month: \(usedQuota)")
-                        .font(.system(size: 12))
-                        .foregroundStyle(Color("textSecondary"))
+                    // 自动密钥模式状态显示
+                    if AppContext.shared.appConfig.autoKeyMode {
+                        HStack(spacing: 8) {
+                            // 剩余配额胶囊
+                            QuotaCapsuleView(usedQuota: vm.monthlyUsedQuota)
+                            
+                            // 密钥状态胶囊
+                            APIKeyStatusView()
+                        }
                         .frame(maxWidth: .infinity, alignment: .leading)
+                    } else {
+                        // 手动模式：显示传统的已压缩数量
+                        let usedQuota = vm.monthlyUsedQuota >= 0 ? String(vm.monthlyUsedQuota) : "--"
+                        Text("Images compressed this month: \(usedQuota)")
+                            .font(.system(size: 12))
+                            .foregroundStyle(Color("textSecondary"))
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
 
                     if saveMode == AppConfig.saveModeNameSaveAs {
                         Button {

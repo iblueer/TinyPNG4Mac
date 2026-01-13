@@ -226,7 +226,7 @@ struct SettingsView: View {
                 print("User Select: \(url.rawPath())")
                 outputDirectory = url.rawPath()
             } else {
-                print(\"User did not grant access.\")
+                print("User did not grant access.")
             }
         }
     }
